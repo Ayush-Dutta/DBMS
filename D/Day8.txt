@@ -1,0 +1,68 @@
+---DAY 8
+
+
+
+select ename
+from empl 
+where salary > ALL(select avg(salary) from empl);
+
+select t.ename,t.dno,d.dname
+from empl t
+join dept d on
+d.dno=t.dno
+where salary > (select avg (salary) from empl e where e.dno=t.dno)
+order by salary;
+
+select t.ename,t.dno,t.salary
+from empl t
+where  exists (select avg (salary) from empl e where e.dno=t.dno)
+order by t.dno;
+
+
+select max(Salary) as max_salary from EMPL;
+
+
+select distinct salary
+from empl e
+where (select count(distinct salary)
+from empl t
+where e.salary <= t.salary)=&n;
+
+create VIEW
+customer_view as
+select name , age
+from customer
+where age is not null
+with check option;
+
+select * from customer_view;
+drop view customer_view;
+select * from customer;
+
+
+--ASSIGNMENT 3
+
+
+create table
+Department(
+    Dno Number(4) primary key ,
+    Dname Varchar2(10) not null
+);
+
+
+create table
+Employees
+(
+    Eno Varchar2(5) constraint emps_pk primary key
+    check (Eno not like 'e%'),
+    Ename Varchar2(10) not null,
+    Salary Number (7,2),
+    check(Salary >=5000 and Salary <=30000),
+    Join_date date,
+    Birth_date date,
+    Dno Number(4),
+    Address Varchar2(20),
+    Manager_id varchar2(5)
+    check(Manager_id not like'e%'),
+    Foreign key (Dno) references Department
+);

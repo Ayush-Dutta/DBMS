@@ -1,0 +1,230 @@
+create table
+EMP(
+    	eno varchar2(3) primary key,
+    	emp_name varchar2(10) not null,
+    	company_id varchar2(3) not null,
+    	company_name varchar2(6) not null,
+    	salary number(7,2)
+    );
+drop table emp;
+
+insert into EMP values ('E1','Messi','C1','HR',80000);
+insert into EMP values ('E2','Messia','C2','sales',60000);
+
+insert into EMP values ('E3','Mai','C1','HR',10000);
+insert into EMP values ('E4','Mei','C2','sales',80000);
+insert into EMP values ('E5','Essia','C2','sales',90000);
+insert into EMP values ('E6','Msia','C1','HR',20000);
+insert into EMP values ('E7','Mesia','C2','sales',40000);
+insert into EMP values ('E8','Mssia','C2','sales',50000);
+insert into EMP values ('E9','Mea','C3','Marketing',30000);
+insert into EMP values ('E10','Me','C3','Marketing',80000);
+insert into EMP values ('E11','Messiaaa','C2','sales',70000);
+
+
+insert into EMP values ('E12','Mass','C2','sales',90000);
+
+select * from emp order by eno desc;
+
+
+--1
+declare
+	ename emp.emp_name%type;
+	c_name  emp.company_name%type;
+	sal		emp.salary%type;
+	cursor c_c1 is select emp_name ,company_name,salary from EMP;
+
+begin
+	open c_c1;
+	loop
+    	fetch c_c1 into ename,c_name,sal;
+    	exit when c_c1%notfound;
+    	dbms_output.put_line('employee '|| ename ||' working in company '|| c_name || ' and earns RS. '||sal);
+	end loop;
+
+end;
+
+
+--2
+
+begin
+	update Emp
+    set salary=salary*0.2+salary
+	where company_id='C1';
+
+	if SQL%NOTFOUND then
+		dbms_output.put_line('Not Updated');
+	end if;
+
+	
+	if SQL%FOUND then
+		dbms_output.put_line('Updated');
+	end if;
+
+	
+	if SQL%ROWCOUNT >0 then
+		dbms_output.put_line(SQL%ROWCOUNT||' rows Updated');
+	else
+        dbms_output.put_line('0 rows Updated');
+	end if;
+
+end;
+
+--3
+
+
+declare
+	n number;
+	cursor c1 is select salary from EMP where company_id='C1' for update;
+begin
+    	n:=0;
+		for emp in c1 loop
+    		update emp
+    		set salary=salary*.2 + salary where current of c1;
+			n:=n+1;
+		end loop;
+	dbms_output.put_line('no of updates is '||n);
+end;
+
+
+DECLARE
+    CURSOR emp_cursor IS
+        SELECT salary
+        FROM EMP
+        WHERE company_id = 'C1'
+        FOR UPDATE;
+    emp_record emp_cursor%ROWTYPE;
+    rows_affected INT := 0;
+BEGIN
+    OPEN emp_cursor;
+
+    LOOP
+        FETCH emp_cursor INTO emp_record;
+        EXIT WHEN emp_cursor%NOTFOUND;
+
+        UPDATE EMP
+        SET salary = salary * 1.20
+        WHERE CURRENT OF emp_cursor;
+
+        rows_affected := rows_affected + 1;
+    END LOOP;
+
+    CLOSE emp_cursor;
+
+    IF rows_affected > 0 THEN
+        DBMS_OUTPUT.PUT_LINE('Number of rows updated: ' || rows_affected);
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('No rows updated.');
+    END IF;
+END;
+/
+
+
+
+--2
+
+begin
+	update emp
+	set salary=salary*1.2
+	where company_id='C2';
+
+	if 	sql%NOTFOUND
+	THEN
+		DBMS_OUTPUT.PUT_LINE('no DATA UPDATED');
+	ELSIF SQL%FOUND
+	THEN
+		DBMS_OUTPUT.PUT_LINE('DATA UPDATED');
+	END IF;
+
+	if 	sql%ROWCOUNT>0
+	THEN
+		DBMS_OUTPUT.PUT_LINE(sql%ROWCOUNT||' ROWS UPDATED');
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('0 ROWS UPDATED');
+	END IF;
+END;
+
+
+
+--3
+
+declare 
+		rows_affected INT := 0;
+    	rec number;
+		cursor c2 is select salary from emp where company_id='C2' for update;
+begin
+		open c2;
+		loop
+            fetch c2 into rec;
+			EXIT WHEN c2%NOTFOUND;
+			update emp
+			set salary=salary*1.2
+			where current of c2;
+			 rows_affected := rows_affected + 1;
+    	END LOOP;
+
+		if 	rows_affected>0
+	THEN
+		DBMS_OUTPUT.PUT_LINE(rows_affected||' ROWS UPDATED');
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('0 ROWS UPDATED');
+	END IF;
+END;	
+
+
+
+---4
+declare
+    ename emp.emp_name%type;
+    cname emp.company_name%type;
+    salary emp.salary%type;
+	cursor c_c1 is select emp_name ,company_name,salary from EMP;
+	n number;
+begin
+    n:=10;
+	dbms_output.put_line('emp_name'||'   '||'comp_name'||'    '||'salary');
+	open c_c1;
+	loop
+        
+		fetch c_c1 into ename, cname, salary;
+		exit when n<=0;
+		dbms_output.put_line(ename||'       '|| cname||'     '||'       '|| salary);
+		n := n-1;
+	end loop;
+	close c_c1;
+end;
+
+--5
+
+
+create table
+EMP1(
+    	eno varchar2(3) primary key,
+    	emp_name varchar2(10) not null,
+    	company_id varchar2(3) not null,
+    	company_name varchar2(6) not null,
+    	city varchar2(6),
+    	street varchar2(16),
+    	salary number(7,2)
+    );
+
+insert into EMP1 values ('E1','Messi','C1','HR','Mumbai','lpopo',80000);
+insert into EMP1 values ('E2','Messia','C2','sales','kolkat','ldydy',60000);
+select * from emp1;
+
+declare
+		--ename emp1.emp_name%type;
+    	--cname emp1.company_name%type;
+    	--salary emp1.salary%type;
+		cursor c_c1(st varchar2, ct varchar2) is select * from EMP1 where st=emp1.street and ct = emp1.city;
+		tmp c_c1%rowtype;
+		st emp1.street%type;
+		ct emp1.city%type;
+begin
+    	st:='ldydy';
+		ct:='kolkat';
+		for tmp IN c_c1(st,ct)
+		loop
+				dbms_output.put_line('name '||tmp.emp_name||' comp name '||tmp.company_name||' salary '||tmp.salary);
+		end loop;
+end;

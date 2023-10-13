@@ -1,0 +1,232 @@
+
+create table Employee 
+( 
+    Emp_no char(2) primary key constraint Empl_no 
+    check (Emp_no like 'E%'), 
+    Emp_name varchar2(10) not null, 
+    Street varchar2(10), 
+    city varchar2(10) constraint Empl_city 
+    check (city in('Chennai', 'Mumbai', 'Delhi', 'Kolkata')) 
+);
+
+create table Company 
+( 
+    Comp_no char(2) primary key constraint Company_no 
+    check (Comp_no like 'C%'), 
+    Comp_name varchar2(10) not null, 
+    City varchar2(10) constraint Employee_city 
+    check (city in('Chennai', 'Mumbai', 'Delhi', 'Kolkata')) 
+);
+
+
+
+create table Works 
+( 
+    Emp_no char(2) references Employee, 
+    Comp_no char(2) references company, 
+    salary number(6), 
+    primary key(Emp_no, Comp_no)   
+);
+
+
+create table Manager 
+( 
+    Mgr_no char(2) primary key constraint mr_no 
+    check (Mgr_no like 'E%'), 
+    Manager_name varchar2(10) not null 
+);
+
+
+alter table Employee add Mgr_no char(2);
+alter table Employee modify Street varchar2(11);
+
+
+
+
+insert into Employee values('E1', 'Ashim', 'Parkstreet', 'Kolkata', 'E4');
+insert into Employee values('E2', 'Kamal', 'MarineDrive', 'Mumbai',  'E3');
+insert into Employee values('E3', 'Tamal',  'AnnaSalai', 'Chennai', 'E5');
+insert into Employee values('E4', 'Asha', 'LeninSarani', 'Kolkata', '');
+insert into Employee values('E5', 'Arun', 'MGRoad', 'Mumbai', '');
+
+
+
+
+insert into Company values('C1', 'SBI', 'Kolkata');
+insert into Company values('C2', 'CTS', 'Chennai');
+insert into Company values('C3', 'TCS', 'Mumbai');
+
+insert into Works values('E1', 'C1', 10000);
+insert into Works values('E2', 'C3', 20000);
+insert into Works values('E3', 'C2', 22000);
+insert into Works values('E4', 'C1', 18000);
+insert into Works values('E5', 'C3', 17000);
+
+select * from Works;
+
+
+
+insert into Manager values('E1', 'Ashim');
+insert into Manager values('E2', 'Kamal');
+insert into Manager values('E3', 'Tamal');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--assignment 2
+
+
+--1
+
+
+select employee.emp_name,company.comp_name
+from employee
+join works on employee.emp_no=works.emp_no
+join company on works.comp_no = company.comp_no
+where company.comp_name = 'SBI';
+
+
+
+--2
+
+
+select e.emp_name,e.city,c.comp_name
+from employee e
+join works w on w.emp_no=e.emp_no
+join company c on w.comp_no = c.comp_no
+where c.comp_name='SBI';
+
+
+
+--3
+
+
+select e.emp_name,e.street,e.city
+from employee e
+join works w on w.emp_no=e.emp_no
+join company c on w.comp_no = c.comp_no
+where c.comp_name='SBI' and w.salary > 10000;
+
+
+
+--4
+
+
+select e.emp_name,e.city as emp_city ,c.comp_name,c.city as comp_city
+from employee e
+join works w on w.emp_no=e.emp_no
+join company c on w.comp_no = c.comp_no
+where e.city=c.city;
+
+
+
+--5
+
+
+select E.emp_name from employee E
+join managers m on E.emp_no=m.emp_no
+where (E.city,E.street) in
+(Select emp.city,emp.street from employee emp
+    where emp.emp_no=m.emp_no);
+
+
+
+
+--6
+select employee.emp_no, employee.emp_name,company.comp_name
+from employee
+join works on employee.emp_no=works.emp_no
+join company on works.comp_no = company.comp_no
+where company.comp_name != 'SBI';
+
+
+--7
+
+
+select Employee.Emp_name ,Employee.emp_no
+from Employee join  Works 
+on Employee.Emp_no = Works.Emp_no 
+and (salary > all (select salary from Works join Company C
+    ON C.comp_no = Works.Comp_no and C.Comp_name = 'SBI'));
+
+
+
+--8
+
+
+select E.emp_name,E.emp_no from employee E join works W 
+on E.emp_no = W.emp_no 
+and (salary > (select avg(salary) from works w
+    join company C on C.comp_no = w.comp_no));
+
+
+
+
+--9
+
+
+
+select c.comp_name from company c 
+where (select count (w.emp_no) from works w where w.comp_no=c.comp_no) = (select max(emp_count)
+    from (select w.comp_no,count (w.emp_no) as emp_count from works w group by w.comp_no));
+
+
+
+
+--10
+
+
+select c.comp_name from company c
+    where (select sum(w.salary) from works w where  w.comp_no=c.comp_no )
+    = (select min(payroll) from (select w.comp_no, sum(w.salary) as payroll from
+    works w group by w.comp_no));
+
+
+
+--11
+
+
+select c.comp_name from company c 
+where (select avg(w.salary) from works w where  w.comp_no=c.comp_no ) > 
+(select avg(w.salary) from works w1 join company c1 on  w1.comp_no=c1.comp_no 
+    where c1.comp_name='SBI')
+
+
+--12
+
+update employee 
+set city = 'Kolkata' 
+where emp_name='Tamal';
+
+
+--13
+
+update works
+set salary = salary*1.1
+where comp_no in (select comp_no from company where comp_name = 'SBI');
+
+--14
+UPDATE Works 
+SET Salary = Salary * 1.10 
+WHERE Emp_no IN ( 
+    SELECT M.Mgr_no 
+    FROM Manager M 
+    JOIN Employee E ON M.Mgr_no = E.Emp_no 
+    JOIN Works W ON E.Emp_no = W.Emp_no 
+    JOIN Company C ON W.Comp_no = C.Comp_no 
+    WHERE C.Comp_name = 'SBI' 
+)
+
+--15
+delete from works 
+where comp_no in (select comp_no from company where comp_name = 'SBI');

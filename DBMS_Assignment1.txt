@@ -1,0 +1,84 @@
+1.
+  a) Display all employees having "a" as the second letter in their names.
+	select* from EMPL where Ename like '_a%';
+
+  b) Display employee names for those who joined in the month of Jun.
+	select* from EMPL where Join_date like '%___06___%';
+
+  c) Display names of all employees in the alphabetic order.
+	select* from EMPL order by Ename;
+
+  d) Find the average salary of all employees.
+	select avg(Salary) from EMPL;
+
+
+
+2.
+ a) Display employee's names and department names of all employees who belong to either "Chennai", or
+"Kolkata" or "Mumbai".
+	select Ename, Dname from EMPL, DEPT where EMPL.Dno = DEPT.Dno and city in('Kolkata', 'Chennai', 'Mumbai');
+
+ b) List all the employee names whose basic is greater than 7000 and less than 18000.
+	select Ename from EMPL where Salary>7000 and Salary<18000;
+
+ c) Display list of all employees in department no. 2.
+	select Dno, count(Dno) "COUNT" from EMPL group by(Dno);
+
+ d) Display the no. of employees in each department.
+	select City, sum(Salary) from EMPL group by(City) having sum(Salary) >9000;
+
+
+
+3.
+ a) List only the names of all other employees who get the same basic pay as that of employee "Tamal".
+	select Ename from EMPL where Salary =(select Salary from EMPL where Ename='Tamal')and Ename !='Tamal' ;
+
+ b) Display the joining date of all employees in â€œdd/mm/yyâ€ format.
+	select Ename, to_char(Join_date, 'dd/mm/yy') from EMPL;
+
+ c) Find all departments that have more than 3 employees.
+	select Dno, count(Dno) "COUNT" from EMPL group by(Dno) having count(Dno)>3;
+
+ d) Find the difference between highest and lowest salary.
+	select max(Salary) - min(Salary) "Difference" from EMPL;
+
+
+
+4.
+ a) Display the names of all employees who are engaged in two or more projects.
+	select Ename from EMPL join PROJECT on EMPL.Eno= PROJECT.Eno group by(EMPL.Eno), EMPL.Ename having count(PROJECT.Pno)>=2 ;
+
+ b) List of all employees who have salary between 2000 &10000.
+	select Ename from EMPL where Salary between 2000 and 10000;
+
+ c) List details of all employees in department number 2 & 1.
+	select * from EMPL where Dno in (1, 2) order by Dno;
+
+
+
+5.
+ a) Display employee number, employee name and basic pay for employees with lowest salary.
+		select Eno, Ename, Salary from EMPL where Salary = (Select min(Salary) from EMPL);  
+
+ b) Display the structure of table EMPL.
+	desc EMPL;
+
+ c) List the name and the salary of all employee sorted' by salary.
+	select Ename, Salary from EMPL order by Salary;
+
+ d) Display the list of all employees who were hired during 2002.
+	select Ename from EMPL where to_char(Join_date, 'YY')=02;
+	select Ename from EMPL where Join_date like '%-%-02';
+
+
+
+6.
+ a) Display employee name and basic pay for all employees who are engaged with at least one project.
+	select EMPL.Ename, EMPL.Salary from EMPL join PROJECT on EMPL.Eno= PROJECT.Eno ;
+
+ b) List of all employees who have name exactly 4 characters.
+	select Ename from EMPL where length(Ename)=4;
+	select Ename from EMPL where Ename like '____';
+
+ c) List no. of projects undertaken in the department 1.
+	select count(*)  as NumProjects from Project join EMPL on PROJECT.Eno = EMPL.Eno;

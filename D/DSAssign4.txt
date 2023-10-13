@@ -1,0 +1,56 @@
+
+
+----Assignment 4
+
+
+
+create table 
+Account(
+        Account_No varchar2(5) primary key,
+        Branch_Name varchar2(20) not null,
+        Amount Number(10));
+        
+        
+insert into Account
+values('A1','Kolkata',50000);
+
+insert into Account
+values('A2','Howrah',40000);
+
+insert into Account
+values('A3','Howrah',40000);
+
+insert into Account
+values('A4','Kolkata',20000);
+
+insert into Account
+values('A5','Durgapur',30000);
+
+select * from Account;
+
+
+----a
+
+CREATE VIEW Account1 AS
+SELECT branch_name, SUM(Amount) AS TotalAmount
+FROM Account
+GROUP by branch_name;
+
+SELECT * FROM Account1;
+
+
+--b
+select branch_name ,TotalAmount from Account1
+where TotalAmount > 50000;
+
+
+select branch_name ,sum(Amount)
+from account
+group by(branch_name)
+having sum(amount) > 50000
+order by branch_name;
+
+create index Branch
+on Account(Branch_name);
+
+select * from user_indexes;

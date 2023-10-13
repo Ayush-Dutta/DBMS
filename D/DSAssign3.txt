@@ -1,0 +1,72 @@
+---ASSIGNMENT 3
+
+insert into Department
+values(1,'HR');
+
+insert into Department
+values(2,'Sales');
+
+insert into Department
+values(3,'Marketing');
+
+
+
+select * from Department;
+
+
+insert into Employees
+values('1','Mohan',15000,'15-JUN-2019','24-JUN-1989',1,'Kolkata','');
+
+insert into Employees
+values('2','Ram',5000,'20-MAY-2018','02-MAY-1989',1,'Mumbai','1');
+
+insert into Employees
+values('3','Ashima',7000,'12-DEC-2017','26-OCT-1999',2,'Kolkata','4');
+
+insert into Employees
+values('4','Asha',9000,'10-JAN-2018','12-MAR-1998',3,'Delhi','5');
+
+insert into Employees
+values('5','Tamal',11000,'01-JAN-2016','12-DEC-1987',3,'Chennai','1');
+
+select * from Employees;
+
+commit;
+
+
+---a
+
+select count(Eno) as No_of_emply ,Dname
+from Employees E , Department D where  E.Dno=D.Dno
+group by(Dname);
+
+
+
+--b
+
+select Ename,Dname,Salary from Employees E , Department D where  E.Dno=D.Dno
+and Salary in(select max(salary) from Employees group by (Dno));
+
+--c
+
+select max(Salary)
+from Employees 
+where Salary < (Select Max(Salary) from Employees);
+
+SELECT DISTINCT salary,Ename
+FROM employee e
+WHERE (
+    SELECT COUNT(DISTINCT salary)
+    FROM employee t
+    WHERE e.salary <= t.salary
+) = '&n';
+
+--d
+select E.Ename as  manager_name ,E.Salary as manager_sal,M.Ename as emply_name,M.Salary as emply_sal
+from Employees E join Employees M
+on E.Eno=M.Manager_id;
+
+--e
+select Ename, join_date,birth_date
+from Employees
+where to_char(Join_date,'%_mm_%')=to_char(Birth_date,'%_mm_%');

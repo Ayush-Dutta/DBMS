@@ -1,0 +1,211 @@
+--ASSIGNMENT 5
+
+
+--1
+set serveroutput on size 10000
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('HELLO WORLD');
+END;
+/
+
+
+--2
+set serveroutput on size 10000;
+
+DECLARE
+	num number:= &num;
+BEGIN
+	--num;
+
+	if mod(num,2)=0
+	then
+		 DBMS_OUTPUT.PUT_LINE(' '||num||'is a even number.');
+	else
+		DBMS_OUTPUT.PUT_LINE(' '||num||'is a odd number.');
+	end if;
+END;
+/
+
+
+
+--3
+set serveroutput on size 1000;
+declare
+    n integer:=8;
+    i integer:=2;
+    k integer:=1;
+begin
+    for i in 2..SQRT(n/2) loop
+        if mod(n,i) =0
+        then
+            k:=k+1;
+            exit;
+        end if;
+    end loop;
+    
+    if k =1
+    then
+        dbms_output.put_line('Prime Number');
+    else
+        dbms_output.put_line('Not prime Number');
+    end if;
+end;
+/
+
+
+--4
+
+create table acc	(
+    ac_no varchar2(6),
+    nm number(6),
+    balance number(6)
+);
+
+declare
+    ac_no varchar2(6):='AX3465';
+	nm number(6):=678960;
+	balance number(6):=310111;
+begin
+	INSERT INTO acc values (ac_no, nm, balance);
+end;
+
+select * from acc;
+drop table acc;
+
+
+
+--5
+set serveroutput on size 1000;
+
+DECLARE
+	n number;
+	fact number:=1;
+	i number;
+begin
+	n:=5;
+
+	for i in 1..n
+	loop
+		fact:=fact*i;
+	end loop;
+
+	dbms_output.put_line('factorial of '||n||' is '||fact);
+end;
+/
+
+
+--6
+
+DECLARE
+    num number:=10;
+	a number:=0;
+	b number:=1;
+	c number;
+	i number;
+BEGIN
+	dbms_output.put_line('Fibonacci series is:');
+	dbms_output.put_line(a);
+	dbms_output.put_line(b);	
+
+	for i in 3..(num)
+	loop
+		c:=a+b;
+		a:=b;
+		b:=c;
+	dbms_output.put_line(c);
+	end loop;
+	
+END;
+/
+
+
+
+
+--7
+declare
+	n number;
+	i number;
+	rev number:=0;
+	rem number;
+
+begin
+	n:=1234;
+	
+	while n>0
+	loop
+		rem:=mod(n,10);
+		rev:=(rev*10)+rem;
+		n:=trunc(n/10);
+	end loop;
+	DBMS_OUTPUT.PUT_LINE('Reversed Number: ' || rev);
+END;
+/
+
+
+--8
+DECLARE
+   a NUMBER := 15; -- Replace with the first number
+   b NUMBER := 25; -- Replace with the second number
+   c NUMBER := 10; -- Replace with the third number
+BEGIN
+    
+    
+    if a>=b AND a>=c
+	then
+		dbms_output.put_line('a is greatest');
+	elsif b>=a AND b>=c
+	then
+			dbms_output.put_line('b is greatest');	
+	else
+			dbms_output.put_line('c is greatest');
+	
+	end if;
+END;
+/
+
+--9
+
+create table circle (
+    radius number(6,2),
+    area number(6,2)
+);
+
+drop table circle;
+
+--i
+DECLARE
+   radius NUMBER;
+   area NUMBER;
+BEGIN
+   FOR radius IN 3..7 LOOP
+      area := 3.14 * POWER(radius, 2); 
+      INSERT INTO Circle (radius, area) VALUES (radius, area);
+   END LOOP;
+END;
+
+select * from circle;
+
+--ii
+
+alter table circle 
+add diameter number(6,2);
+
+UPDATE Circle
+SET diameter = 2 * radius;
+
+select * from circle;
+
+
+--iii
+DECLARE
+    rec_count number := 0;
+    CURSOR cursor_c_records IS SELECT COUNT(*) FROM Circle;
+BEGIN
+    OPEN cursor_c_records;
+    FETCH cursor_c_records INTO rec_count;
+    CLOSE cursor_c_records;
+
+    DBMS_OUTPUT.PUT_LINE('Number of records in Circle table: ' || rec_count);
+END;
+/
+
